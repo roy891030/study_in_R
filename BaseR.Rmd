@@ -1,0 +1,231 @@
+---
+title: "R語言基礎"
+author: "林士弘"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    highlight: pygments
+    theme: flatly
+    css: JH.css
+    toc: true
+    toc_depth: 3
+    toc_float:
+      collapsed: false
+---
+
+```{r message=FALSE, warning=FALSE, include=FALSE}
+devtools::install_github("ropenscilabs/icon")
+```
+
+
+# R語言基本介紹
+
+
+## 基本運算
+
+先來認識一下R語言吧！
+```{r}
+print("hello R ")
+```
+
+**R就像一台計算機** <br>
+來算一下數學，體驗看看計算機的威力 <br>
+● 加減乘除
+```{r}
+8+7-5
+50*99/125
+```
+● 進階數學
+```{r}
+sqrt(25)  #開根號
+log(100,10) #以log 10為底的100
+5%%2
+```
+## 物件式的運算環境
+R語言中所有的東西都是一個物件(objects)<br>
+**物件：名稱、值、種類、結構**<br>
+● 聯結函數concatenation：**c()** <br>
+阿祥一學期有三次大考，考試分別考國文、英文、數學，他每次考試的總分多少？
+```{r}
+Chinese <- c(80,50,30)
+English <- c(60,100,85)
+Math <- c(60,75,20)
+grade <- Chinese+English+Math #總和
+grade
+avg<-grade/3 #取平均
+
+```
+
+
+## 基本的計算功能
+**每一段程式都是由物件(objects)、運算符號(operator)和功能(function)所組成的運算式(expression)**<br>
+
+● 物件長度：length()
+
+```{r}
+x <- c(1,19,30,55,66)
+x%>%data.frame()#顯示dataFrame," %>% "快捷鍵為Ctrl+Shift+m
+length(x)
+```
+● 加總sum()、平均mean()、最大值max()、最小值min()、標準差sd()
+```{r}
+sum(x)
+mean(x)
+max(x)
+min(x)
+sd(x)
+```
+## 向量的指標用法
+**一個向量變數x的第i個元素值可以用x[i]表示**
+```{r}
+x[2]
+x[6]
+x[c(1,2)]
+
+```
+
+`r icon::fa_lightbulb(color="#F4D03F",size=1.5)` **小問題**<br>
+**傑哥喜歡賭博，他這次面對一個豪賭的機會，他該不該加入賭局呢？** <br>
+目前遇到的賭局如下：<br>
+(1) 0.2的機率可以賺1,000元<br>
+(2) 0.5的機率可以賺500元<br>
+(3) 0.3的機率倒貼2,000元<br>
+<br>
+Tips：結合一個機率物件 = prob，一個金額物件 = reward，並將兩個相乘後做加總，計算出**預期報酬**<br>
+幫幫傑哥決定他要不要加入賭局？
+```{r}
+# 要不要加入呢？
+
+prob=c(0.2,0.5,0.3)
+cost=c(1000,500,-2000)
+choice=prob*cost
+choice
+sum(choice)
+
+```
+
+
+# 認識資料
+
+## 資料結構
+**資料主要可分為下列不同種結構** <br>
+單值(scalar)：R語言中沒有scalar <br>
+向量(vector)：數值、字串、日期 <br>
+陣列(array) <br>
+矩陣(matrix) <br>
+資料框(data.frame) <br>
+序列(list) <br>
+類別(factor) <br>
+列聯表(table) <br>
+
+## 套件下載及讀取
+R語言為一個開源性軟體，許多功能都由眾多人一起寫出來的，而各種功能都在每一個「套件」中。<br>
+故想要使用特定功能就需要下載該套件，並且讀取套件。<br>
+● 套件下載
+```{r}
+# install.packages("dplyr")
+```
+
+● 讀取套件
+```{r message=FALSE, warning=FALSE}
+library(dplyr) 
+library(magrittr)
+```
+
+## 讀取資料：R愛台灣資料
+
+```{r}
+rm(list = ls()) # 刪除環境中所有物件
+load("camp.Rdata")
+```
+
+● 確認資料結構
+```{r}
+is.data.frame(df)
+```
+
+
+```{r}
+y=c(1,4,6,25,54,2)
+s=sum(y)
+
+#x <- c(1,19,30,55,66)
+#x%>%data.frame()#顯示dataFrame," %>% "快捷鍵為Ctrl+Shift+m
+#length(x)
+
+
+y%>%data.frame()
+```
+## 資料型態
+**資料可分為以下不同種類** <br>
+int (interger) ：整數 <br>
+double：雙倍精確度數字，也稱為real或numeric屬性<br>
+Complex：複數<br>
+logical(Boolean/binary)：邏輯(二元)。TRUE(T)，FALSE(F) <br>
+chr(character)：字串 <br>
+Date：日期/時間 <br>
+
+● 資料摘要
+```{r}
+summary(df)
+```
+
+## 資料探索
+```{r}
+nrow(df)  #列數
+ncol(df)  #欄位數
+dim(df)   #維度
+``` 
+```{r}
+str(df)   
+```
+● 傳回資料框架變數 
+```{r}
+df[2] %>% head(6)
+df["村里名稱"]  %>% head(6)
+```
+● 傳回向量
+```{r}
+head(df$"縣市代碼",6)
+head(df[["year"]],10)
+```
+
+# 資料探索實用技巧
+## 找出資料中不重複的值
+● unique()
+```{r}
+unique(df$"縣市名稱")
+```
+
+## 根據不同物件進行計算
+tapply(想要計算的物件，根據那些物件計算，函數)
+```{r}
+tapply(df$"自然增加人數",df$"縣市名稱",mean)
+```
+
+## 大小排列
+● sort(), order() <br>
+decreasing = T 代表由大排列至小，原本設定(default)為由小排至大。
+```{r}
+sort(tapply(df$"自然增加人數",df$"縣市名稱",mean)) #直接顯示值
+```
+```{r}
+order(tapply(df$"自然增加人數",df$"縣市名稱",mean)) #顯示序列位置
+```
+
+## 資料型態轉換
+
+● as.numeric(),as.character.....<br>
+將特定資料型態轉換為指定型態，如文字轉數值。
+
+```{r}
+as.numeric(df$"縣市代碼") %>% class()
+```
+
+
+
+
+
+
+
+
